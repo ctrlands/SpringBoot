@@ -7,20 +7,14 @@ import com.example.mybatis.service.CommonService;
 import com.example.mybatis.service.LoginRequired;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * 负责具体的业务模块流程的控制，即页面访问控制，调用service层里面的接口控制具体的业务流程
@@ -119,6 +113,7 @@ public class CommonController {
     }
 
     @RequestMapping(value = "/index", method = {RequestMethod.POST, RequestMethod.GET} )
+    @LoginRequired
     public String loginindex () {
         return "/login/index";
     }

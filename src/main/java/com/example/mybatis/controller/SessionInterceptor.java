@@ -21,8 +21,15 @@ import java.lang.reflect.Method;
 public class SessionInterceptor implements HandlerInterceptor {
     @Override
     public boolean preHandle (HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception{
-        HandlerMethod handlerMethod = (HandlerMethod) handler;
+
+        // HandlerMethod handlerMethod = (HandlerMethod)handler; 报错导致 无法加载js/css文件
+       if (!(handler instanceof HandlerMethod)) {
+           return true;
+        }
+
+        HandlerMethod handlerMethod = (HandlerMethod)handler;
         Method method = handlerMethod.getMethod();
+
         // 判断接口是否需要登陆
         LoginRequired methodAnnotation = method.getAnnotation(LoginRequired.class);
         // System.out.println("methodAnnotation===" + methodAnnotation);
