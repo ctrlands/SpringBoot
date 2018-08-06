@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>分页&CRUD</title>
+    <style>
+        a{
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+
+<p th:text="${session.name}"></p>
+<div id="ajaxTest">
+</div>
+<div>
+    <a id="pre">上一页</a>
+    <a id="next">下一页</a>
+    每页数量<input id="perPages" name="perPages" type="text" value="5">
+</div>
+<div id="qnameinfo"></div>
+
+<!--删除-->
+<input type="text" placeholder="根据用户名查询" id="qryname">
+<input type="button" value = "qry" id="qrybtn">
+<input type="button" value = "del" id="delbtn">
+
+<script th:src="@{/js/jquery.min.js}"></script>
+<script th:src="@{/js/kendo.all.min.js}"></script>
+<script th:inline="javascript">
+    /*<![CDATA[*/
+    var currentPage = 1; //当前页数
+    var perPage = $("#perPages").val(); // 每页展示数量
+    ajaxGetInfo();
+    function ajaxGetInfo() {
+       var perPage = $("#perPages").val(); // 每页展示数量
+        // console.log("ajax"+currentPage);
+
+        $.ajax({
+            url: "/getInfoPage",
+            data: {
+                currentPage: currentPage,
+                perPage: perPage
+            },
+            type: "GET",
+            dataType: "json",
+            beforeSend:function () {
+                // 用于在向服务器发送请求前执行一些动作,eg.防止用户重复提交数据,模拟Toast效果(ajax请求服务器加载数据列表时提示loading(“加载中，请稍后...”))
+            },
+            success: function (data) {
+                //console.log(data);
+                //console.log(data.pages);
+                //console.log(data.stuPage);
+                var s1 = data.stuPage;
+                var str = "";
+                if(s1.length > 0){
+                    for(var k in s1) {
+                       str += "<tr><td>" +  s1[k].id + "</td><td>" + s1[k].name + "</td><td>" + s1[k].pwd + "</td></tr>";
+                    }
+                    $("#ajaxTest").append(str);
+                }
+                else{
+                    alert("已经是最后一页了");
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            },
+            complete:function () {
+                //
+            }
+        });
+    }
+    // 上一页
+    $("#pre").click(function () {
+        $("#ajaxTest").text("");
+        currentPage -= 1;
+       // console.log("if out"+currentPage);
+        if(currentPage < 1){
+            currentPage = 1;
+           // console.log("if in"+currentPage);
+            alert("已经是首页了");
+        }
+        ajaxGetInfo();
+    });
+    // 下一页
+    $("#next").click(function () {
+        $("#ajaxTest").text("");
+        currentPage +=1;
+        var perPage = $("#perPages").val(); // 每页展示数量
+       // console.log("下一页ajax"+currentPage);
+        var bf;
+
+        $.ajax({
+            url: "/getInfoPage",
+            data: {
+                currentPage: currentPage,
+                perPage: perPage
+            },
+            type: "GET",
+            dataType: "json",
+            beforeSend: function () {
+                
+            },
+            success: function (data) {
+                //console.log(data);
+                //console.log(data.pages);
+                //console.log(data.stuPage);
+                //console.log("网页页数"+currentPage);
+                // console.log("后台传来的页数"+data.pages);
+                var s1 = data.stuPage;
+                // console.log("s1.length"+s1.length);
+                var str = "";
+                if(s1.length > 0){
+                    //currentPage = data.pages;
+                    for(var k in s1) {
+                        str += "<tr><td>" +  s1[k].id + "</td><td>" + s1[k].name + "</td><td>" + s1[k].pwd + "</td></tr>";
+                    }
+                    $("#ajaxTest").append(str);
+                }
+                else{
+                    currentPage = data.pages;
+                    console.log("超过总页数"+currentPage);
+                    alert("已经是最后一页了");
+                }
+            },
+            error: function (err) {
+                console.log(err);
+            }
+        });
+    });
+    // 查询
+    $("#qrybtn").click(function () {
+        $("#qnameinfo").text("");
+        var qname = $("#qryname").val();
+        $.ajax({
+            url: "/QueryByName",
+            data: {
+                name: qname,
+            },
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                var str = "";
+
+                if(data.length > 0){
+
+                    for(var k in data) {
+                        str += "<tr><td>" + data[k].id + "</td><td>" + data[k].name + "</td><td>" + data[k].pwd + "</td></tr>";
+                    }
+                    $("#qnameinfo").append(str);
+                }
+                else{
+                    alert("用户不存在");
+                }
+            },
+            error: function (err) {
+                console.log(err.error);
+            }
+        });
+    });
+    // 删除
+    $("#delbtn").click(function () {
+        var dname = $("#qryname").val();
+        $.ajax({
+            url: "/DelByName",
+            data: {
+                name: dname,
+            },
+            type: "GET",
+            dataType: "text",
+            success: function (data) {
+                console.log(data);
+                if(data == -1){
+                    alert("该用户不存在，删除失败");
+                }else{
+                    alert("删除成功");
+                }
+            },
+            error: function (error) {
+                alert("删除异常");
+            }
+        });
+    });
+
+    /*]]>*/
+</script>
+</body>
+</html>

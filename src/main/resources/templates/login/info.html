@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>编号</th>
+                <th>姓名</th>
+                <th>密码</th>
+            </tr>
+        </thead>
+        <tbody>
+            <th>
+                <tr th:each="info,infoStat : ${stuInfoList}">
+                    <td th:text="${info.id}"></td>
+                    <td th:text="${info.name}"></td>
+                    <td th:text="${info.pwd}"></td>
+                </tr>
+            </th>
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>KendoUI-Index</title>
+    <!--thymeleaf导入js/css等文件,可参考文章http://jisonami.iteye.com/blog/2301387-->
+    <link th:href="@{/style/kendo.common.min.css}" rel="stylesheet">
+    <link th:href="@{/style/kendo.default.min.css}" rel="stylesheet">
+</head>
+<body>
+
+   <!-- thymeleaf 获取 后台传给前台值的方式 案列
+   <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>NAME</th>
+            <th>PASSWORD</th>
+        </tr>
+        </thead>
+        <tbody>
+        <th>
+            <tr th:each="info,infoStat : ${stuInfoList}">
+                <td th:text="${info.id}"></td>
+                <td th:text="${info.name}"></td>
+                <td th:text="${info.pwd}"></td>
+            </tr>
+        </th>
+        </tbody>
+    </table>
+    <p th:text= " '用户总数：' + ${total}"></p>
+    -->
+
+
+    <div id="grids">
+    </div>
+
+   <div id="ajaxTest">
+
+   </div>
+
+    <script th:src="@{/js/jquery.min.js}"></script>
+    <script th:src="@{/js/kendo.all.min.js}"></script>
+    <script th:inline="javascript">
+        /*<![CDATA[*/
+
+        /*$.ajax({
+            url: "/getInfoAjax",
+            type: "GET",
+            dataType: "json",
+            success: function (data) {
+                var str = "";
+                for(var k in data) {
+                    str += "<tr><td>" + data[k].id + "</td><td>" + data[k].name + "</td><td>" + data[k].pwd + "</td></tr>";
+                }
+                $("#ajaxTest").html(str);
+                console.log(data);
+            },
+            error: function (err) {
+                alert("error");
+            }
+        });*/
+
+
+
+
+
+
+        var stuInfo = [[${stuInfo}]]; // 获取所有用户信息
+        var total = [[${total}]]; // 获取用户总数量
+        console.log("total"+ total);
+
+        var stuInfoGrid = {
+            data: JSON.parse(stuInfo), // 转为json数组
+            total: total // 用户总数量
+        };
+
+        $("#grids").kendoGrid({
+            dataSource: {
+                data: stuInfoGrid,
+                schema: {
+                    data: "data",
+                    total: "total",
+                    model: {
+                        id: "id",
+                        fields: {
+                            id: "id",
+                            name: "name",
+                            pwd: "pwd"
+                        }
+                    }
+                },
+                pageSize: 5 // 每页显示数量
+            },
+            height: 270, // Grid高度
+            scrollable: true,
+            sortable: true,
+            filterable: true,
+            pageable: {
+                input: true,
+                numeric: false,
+                refresh: true,
+                buttonCount: 5,
+                pageSizes: true,
+                messages: {
+                    display: "显示{0}-{1}条，共{2}条",
+                    empty: "没有数据",
+                    refresh: "刷新",
+                    page: "页",
+                    of: "/ {0}",
+                    itemsPerPage: "条/页",
+                    first: "第一页",
+                    previous: "前一页",
+                    next: "下一页",
+                    last: "最后一页",
+                }
+            },
+            columns: [
+                { field: "id", title: "ID", width: "130px" },
+                { field: "name", title: "NAME", width: "130px" },
+                { field: "pwd", title: "PASSWORD", width: "130px" }
+            ]
+        });
+        /*]]>*/
+    </script>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>showinfo</title>
+</head>
+<body>
+    <div>
+        <h3 th:text="'欢迎您：：' + ${session.name}"></h3>
+        <p>
+            你好！
+        </p>
+        <p>如果你看到这个页面，代表你是登陆成功了</p>
+    </div>
+</body>
+</html>

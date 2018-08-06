@@ -1,0 +1,107 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>formcheck</title>
+    <script type="text/javascript">
+        function checkusrn() {
+            var check = false;
+            var username = document.getElementById("username").value;
+            if (username.length > 10) {
+                document.getElementById("checktext1").innerHTML = "  × 不要多于10位";
+                check = false;
+            } else {
+                document.getElementById("checktext1").innerHTML = "  √";
+                check = true;
+            }
+            return check;
+        }
+
+        function checkpwd() {
+            var check = false;
+            var password = document.getElementById("password").value;
+            if (password.length < 6) {
+                document.getElementById("checktext2").innerHTML = "  × 不要少于6位";
+                check = false;
+            } else {
+                document.getElementById("checktext2").innerHTML = "  √";
+                check = true;
+            }
+            return check;
+        }
+        function checkpwdc() {
+            var check = false;
+            var password = document.getElementById("password").value;
+            var pwdc = document.getElementById("pwdc").value;
+            if (password != pwdc) {
+                document.getElementById("checktext3").innerHTML = "  × 两次输入密码不一致";
+                check = false;
+            } else {
+                document.getElementById("checktext3").innerHTML = "  √";
+                check = true;
+            }
+            return check;
+        }
+        function checkcb() {
+            var check = false
+
+            if (!document.getElementsByName("checkbox")[0].checked) {
+                document.getElementById("checktext4").innerHTML = "  × 请同意我们的条款才可以继续申请";
+                check = false;
+            } else {
+                document.getElementById("checktext4").innerHTML = "";
+                check = true;
+
+            }
+            return check;
+
+        }
+        function check() {
+            var check = checkusrn() && checkpwd() && checkpwdc() && checkcb();
+            return check;
+
+        }
+    </script>
+</head>
+
+<body>
+<form action="success.html" method="get" onsubmit="return check()">
+    <fieldset>
+        <legend>
+            表单验证小例子
+        </legend>
+        <h3>
+            请输入信息
+        </h3>
+        <label>
+            用户名：
+        </label>
+        <input type="text" id="username" name="username"
+               onchange="checkusrn()" />
+        <span id="checktext1"></span>
+        <br />
+        <label>
+            密码：
+        </label>
+        <input type="password" id="password" name="password"
+               onchange="checkpwd()" />
+        <span id="checktext2"></span>
+        <br />
+        <label>
+            确认密码：
+        </label>
+        <input type="password" id="pwdc" name="pwdc" onchange="checkpwdc()" />
+        <span id="checktext3"></span>
+        <br />
+        <input type="checkbox" name="checkbox" onchange="checkcb()" />
+        <label>
+            我已经阅读了XX条款并不能同意得更多
+        </label>
+        <span id="checktext4"></span>
+        <br />
+        <br />
+        <input type="submit" value="走！" />
+    </fieldset>
+</form>
+</body>
+</html>

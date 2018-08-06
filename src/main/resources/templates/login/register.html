@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>register</title>
+</head>
+<body>
+<div>
+    <div>注册</div>
+    <form action="registerPage" method="post">
+        <h3 th:text="${regmsg}"></h3>
+        <table>
+            <tr>
+                <td>name：</td>
+                <td><input type="text" name="name" ></input></td>
+            </tr>
+
+
+            <tr>
+                <td>pwd：</td>
+                <td><input type="text" name="pwd" ></input></td>
+            </tr>
+
+            <tr>
+                <td>repwd：</td>
+                <td><input type="text" name="repwd" ></input></td>
+            </tr>
+            <tr>
+                <td></td>
+                <td><input type="submit" value="注册" ></input></td>
+            </tr>
+        </table>
+    </form>
+</div>
+</body>
+</html>

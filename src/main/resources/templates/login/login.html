@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>login</title>
+</head>
+<body>
+    <div>
+        <div>登录系统</div>
+        <!--<form th:action="@{loginPage}" th:method="post">-->
+        <form action="/loginPage" method="post">
+            <h3 th:text="${mymsg}" id="msg"></h3>
+            <table>
+                <tr>
+                    <td>用户名：</td>
+                    <td><input type="text" name="name" id="name" placeholder="name" onblur="mycheck()"></input><span id="msgs" style="visibility: hidden;"></span></td>
+                </tr>
+
+                <tr>
+                    <td>密码：</td>
+                    <td><input type="text" name="pwd" id="pwd"></input></td>
+                </tr>
+                <tr>
+                    <td></td>
+                    <td><input type="submit" value="登陆" id="loginBtn" class="loginBtn"></input></td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    <script src="https://cdn.bootcss.com/jquery/2.2.2/jquery.js"></script>
+    <script th:inline="javascript">
+        function mycheck() {
+            var isNullVal = $("#name").val();
+            if ( isNullVal == "") {
+                $("#msgs").html("not allow null");
+                $("#msgs").css("visibility" , "visible");
+            }
+            else {
+                var nameReg = /^[0-9a-zA-Z\u4E00-\u9FA5]{2,10}$/;
+                var nameRegResult=new RegExp(nameReg);
+                var low = isNullVal.toLowerCase();
+                if (nameRegResult.test(isNullVal) == true) {
+                    alert("合法");
+                    $("#msgs").css("visibility" , "hidden");
+                }
+                else {
+                    $("#msgs").html("illeageal name");
+                    $("#msgs").css("visibility" , "visible");
+                }
+            }
+        }
+
+
+    </script>
+    <!--<script th:inline="javascript">
+        $("#loginBtn").click(
+            $.ajax({
+                type: "post",
+                dataType: "jsonp",
+                url: "http://localhost:8080/loginPage",
+                success: function (data) {
+                    alert("sc");
+                },
+                error: function (err) {
+                    alert("err");
+                }
+            })
+        );
+    </script>-->
+</body>
+</html>
