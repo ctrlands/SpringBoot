@@ -250,4 +250,20 @@ public class CommonController {
         }
     }
 
+    // 更新用户信息.未完成
+    @RequestMapping(value = "/DelByName", method = {RequestMethod.POST, RequestMethod.GET})
+    @ResponseBody
+    @LoginRequired
+    public String UpdateInfo(HttpServletRequest request){
+        String name = request.getParameter("name");
+        String pwd = request.getParameter("pwd");
+        String id = request.getParameter("id");
+
+        String s = commonService.updateInfo(name,pwd,id);
+        //String stuInfo = JSON.toJSONString(stu);
+        request.setAttribute("stuInfo", s);
+
+        return s;
+    }
+
 }

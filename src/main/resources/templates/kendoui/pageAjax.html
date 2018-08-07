@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
-<head>
-    <meta charset="UTF-8">
+<!--<head>
+    <meta charset="utf-8">
     <title>分页&CRUD</title>
-    <style>
-        a{
-            cursor: pointer;
-        }
-    </style>
+</head>-->
+<head th:replace="common/common_header :: common_header(~{::title},~{::link},~{})">
+    <title>分页&CRUD</title>
+    <link rel="stylesheet" th:href="@{/css/common.css}">
 </head>
 <body>
 
@@ -20,17 +19,284 @@
     <a id="next">下一页</a>
     每页数量<input id="perPages" name="perPages" type="text" value="5">
 </div>
-<div id="qnameinfo"></div>
 
-<!--删除-->
-<input type="text" placeholder="根据用户名查询" id="qryname">
-<input type="button" value = "qry" id="qrybtn">
-<input type="button" value = "del" id="delbtn">
+<table id="test_table" data-click-to-select="true">
+</table>
 
-<script th:src="@{/js/jquery.min.js}"></script>
-<script th:src="@{/js/kendo.all.min.js}"></script>
+<div id="mask">
+
+</div>
+
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    编辑信息
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div id="qnameinfo">
+                    <div>
+                        <span>name:</span><input id="dialog_name" style="margin-left:39px;"><br>
+                    </div>
+                    <div style="margin-top:15px;">
+                        <span>password:</span><input id="dialog_pwd" style="margin-left:15px;">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                </button>
+                <button type="button" class="btn btn-primary" id="updateBtn" onclick="updateInfo">
+                    提交更改
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+
+
+<div th:replace="common/common_footer :: foot"></div>
 <script th:inline="javascript">
     /*<![CDATA[*/
+
+    /*
+    * Bootstrap-table
+    */
+    $("#test_table").bootstrapTable({
+        url: '/getInfoAjax',
+        method: "post",
+        toolbar: "#toolbar",
+        striped: true, // 是否显示行间隔色
+        cache: false, // 是否使用缓存，默认true
+        pagination: true,
+        sortable: true, // 是否启用排序
+        sortOrder: "asc",
+        // queryParams: oTableInit.queryParams, // 传递参数
+        sidePagination: "client", // 分页方式：client（客户端分页），server（服务端分页）
+        pageNumber: 1,
+        pageSize: 5,
+        pageList: [5, 10, 25, 50], // 可供选择的每页显示数量
+        search: true, // 是否显示表格搜索框，客户端搜索
+        strictSearch: true,
+        showColumns: true, // 是否显示所有列
+        showRefresh: true,
+        minimunCountColumns: 1, // 最好允许列数量
+        clickToSelect: true, // 是否允许点击选中行
+        height: 350, // 行高，若未设置，表格根据内容自动计算
+        uniquedId: "Id", // 每一行的唯一标识，一般为主键列
+        showToggle: true, // 是否显示详细视图和列表视图的切换按钮
+        cardView: false, // 是否显示详细视图
+        detailView: false, // 是否显示父子表
+        columns: [
+            {
+                checkbox: true,
+                align: "center",
+                valign: "middle",
+                width: "2%",
+            },
+            {
+                field: "num",
+                title: "序号",
+                align: "center",
+                valign: "middle",
+                width: "2%",
+                formatter: function (value, row, index) {
+                     return index + 1;
+                   /* var pageSize = $("#test_table").bootstrapTable("getOptions").pageSize;
+                    var pageNumber = $("#test_table").bootstrapTable("getOptions").pageNumber;
+                    return pageSize * (pageNumber - 1) + index + 1;*/
+                }
+            },
+            {
+                field: "id",
+                title: "ID",
+                align: "center",
+                valign: "middle",
+                width: "24%",
+            },
+            {
+                field: "name",
+                title: "Name",
+                align: "center",
+                valign: "middle",
+                width: "24%",
+            },
+            {
+                field: "pwd",
+                title: "Password",
+                align: "center",
+                valign: "middle",
+                width: "24%",
+            },
+            {
+                field: "id",
+                title: "操作",
+                width: 120,
+                align: "center",
+                valign: "middle",
+                width: "24%",
+                formatter: actionFormatter,
+                // events: operateEvents
+            }
+        ],
+        onDblClickRow: function(row, $elememt) {
+            var id = row.id;
+            editById();
+            console.log(id);
+        },
+    });
+
+        // 得到查询的参数
+        /*OTableInit.queryParams = function (params) {
+            
+        };
+        return OTableInit;*/
+    //};
+
+
+    // 操作栏的格式化
+    function actionFormatter(value, row, index) {
+        var id = value;
+        var result = "";
+        result += "<a href='javascript:;' class='btn btn-xs green' onclick=\"showByName()\" title='查看'><span class='glyphicon glyphicon-eye-open'></span></a>";
+        result += "<a href='javascript:;' class='btn btn-xs blue' onclick=\"editByName()\" title='编辑'><span class='glyphicon glyphicon-pencil'></span></a>";
+        result += "<a href='javascript:;' class='btn btn-xs red' onclick=\"delByName()\" title='删除'><span class='glyphicon glyphicon-remove'></span></a>";
+        return result;
+    }
+    
+    function showEditDialog() {
+        var oheight = $("body").height();
+        var owidth = $("body").width();
+
+    }
+    function showByName() {
+        console.log("show");
+    }
+    function editByName() {
+       // $("#test_table").bootstrapTable('getSelections');
+        //使用getSelections即可获得，row是json格式的数据
+        var tname;
+        var getSelectRows = $("#test_table").bootstrapTable('getSelections');
+        if (getSelectRows.length > 0) {
+            tname = getSelectRows[0].name;
+            $.ajax({
+             url: "/QueryByName",
+             data: {
+                name: tname,
+             },
+             type: "GET",
+             dataType: "json",
+             success: function (data) {
+                 var str = "";
+                 var rname;
+                 var rpwd;
+                 if(data.length > 0){
+                     for(var k in data) {
+                         rname = data[k].name;
+                         rpwd = data[k].pwd;
+                     }
+                        $("#dialog_name").val(rname);
+                        $("#dialog_pwd").val(rpwd);
+                        $('#myModal').modal('show');
+                     }
+                 else{
+                    alert("用户不存在");
+                 }
+             },
+             error: function (err) {
+                 console.log(err.error);
+             }
+             });
+        } else {
+            alert("请选择需要编辑的数据");
+        }
+    }
+    // 删除
+    function delByName() {
+        var dname;
+        var getSelectRows = $("#test_table").bootstrapTable('getSelections');
+        if (getSelectRows.length > 0) {
+            dname = getSelectRows[0].name;
+            var checkConfirm = confirm("是否删除该条数据");
+            if (checkConfirm == true) {
+                $.ajax({
+                    url: "/DelByName",
+                    data: {
+                        name: dname,
+                    },
+                    type: "GET",
+                    dataType: "text",
+                    success: function (data) {
+                        if (data == 1) {
+                            alert("删除成功");
+                            $("#test_table").bootstrapTable('refresh');
+                        } else {
+                            alert("用户不存在，删除失败");
+                        }
+                    },
+                    error: function (error) {
+                        alert("删除异常");
+                    }
+                });
+            } else {
+                alert("删除操作取消");
+            }
+        } else {
+            alert("请选择需要删除的数据");
+        }
+    }
+
+
+    // 编辑信息
+    function updateInfo() {
+        $.ajax({
+            url: "",
+            data: {
+                name:,
+                pwd:,
+            },
+            type: "POST",
+            dataType: "json",
+            success: function (data) {
+                
+            },
+            error: function () {
+
+            },
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     var currentPage = 1; //当前页数
     var perPage = $("#perPages").val(); // 每页展示数量
     ajaxGetInfo();
@@ -131,61 +397,10 @@
             }
         });
     });
-    // 查询
-    $("#qrybtn").click(function () {
-        $("#qnameinfo").text("");
-        var qname = $("#qryname").val();
-        $.ajax({
-            url: "/QueryByName",
-            data: {
-                name: qname,
-            },
-            type: "GET",
-            dataType: "json",
-            success: function (data) {
-                var str = "";
-
-                if(data.length > 0){
-
-                    for(var k in data) {
-                        str += "<tr><td>" + data[k].id + "</td><td>" + data[k].name + "</td><td>" + data[k].pwd + "</td></tr>";
-                    }
-                    $("#qnameinfo").append(str);
-                }
-                else{
-                    alert("用户不存在");
-                }
-            },
-            error: function (err) {
-                console.log(err.error);
-            }
-        });
-    });
-    // 删除
-    $("#delbtn").click(function () {
-        var dname = $("#qryname").val();
-        $.ajax({
-            url: "/DelByName",
-            data: {
-                name: dname,
-            },
-            type: "GET",
-            dataType: "text",
-            success: function (data) {
-                console.log(data);
-                if(data == -1){
-                    alert("该用户不存在，删除失败");
-                }else{
-                    alert("删除成功");
-                }
-            },
-            error: function (error) {
-                alert("删除异常");
-            }
-        });
-    });
 
     /*]]>*/
 </script>
+
+
 </body>
 </html>

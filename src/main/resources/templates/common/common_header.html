@@ -1,0 +1,15 @@
+<head th:fragment="common_header(title,links,styles)">
+    <meta charset="utf-8">
+    <title th:replace="${title}">default title</title>
+
+    <!--<meta name="viewport" content="width=device-width,initial-scale=1,maximun-scale=1,user-scalable=no">-->
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap-theme.min.css" rel="stylesheet">
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.12.1/bootstrap-table.min.css" />
+
+    <th:blcok th:replace="${links}" />
+    <th:block th:replace="${styles}" />
+
+</head>

@@ -53,9 +53,13 @@ public class CommonService {
     public List<Stu> QueryByName(String name){
         return  commonmapper.QueryByName(name);
     }
-    //删除ByName
+    // 删除ByName
     public String DelByName(String name){
         return commonmapper.DelByName(name);
+    }
+    // 编辑ByName
+    public String updateInfo(String name, String pwd, String id){
+        return commonmapper.updateInfo(name, pwd, id);
     }
 
 
