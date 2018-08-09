@@ -57,8 +57,8 @@ public class CommonService {
     public String DelByName(String name){
         return commonmapper.DelByName(name);
     }
-    // 编辑ByName
-    public String updateInfo(String name, String pwd, String id){
+    // 编辑ById
+    public List<Stu> updateInfo(String name, String pwd, String id){
         return commonmapper.updateInfo(name, pwd, id);
     }
 

@@ -193,17 +193,21 @@ public class CommonController {
         // 把符合要求的数据和总页数 两个数据封装为json
         JSONObject jsonOne = new JSONObject();
         JSONObject jsonTwo = new JSONObject();
+        JSONObject jsonThree = new JSONObject();
 
         jsonOne.put("stuPage", stuPage);
         jsonTwo.put("pages", pages);
+        jsonThree.put("total", pageAllNum );
 
-        JSONObject jsonThree = new JSONObject();
+        JSONObject jsonFour = new JSONObject();
 
-        jsonThree.putAll(jsonOne);
-        jsonThree.putAll(jsonTwo);
+        jsonFour.putAll(jsonTwo);
+        jsonFour.putAll(jsonOne);
+        jsonFour.putAll(jsonThree);
 
-        System.out.println(jsonThree.toString());
-        String test = JSON.toJSONString(jsonThree);
+
+        System.out.println(jsonFour.toString());
+        String test = JSON.toJSONString(jsonFour);
         request.setAttribute("test", test);
 
 
@@ -250,8 +254,8 @@ public class CommonController {
         }
     }
 
-    // 更新用户信息.未完成
-    @RequestMapping(value = "/DelByName", method = {RequestMethod.POST, RequestMethod.GET})
+    // 更新用户信息
+    @RequestMapping(value = "/UpdataById", method = {RequestMethod.POST, RequestMethod.GET})
     @ResponseBody
     @LoginRequired
     public String UpdateInfo(HttpServletRequest request){
@@ -259,11 +263,17 @@ public class CommonController {
         String pwd = request.getParameter("pwd");
         String id = request.getParameter("id");
 
-        String s = commonService.updateInfo(name,pwd,id);
-        //String stuInfo = JSON.toJSONString(stu);
-        request.setAttribute("stuInfo", s);
+        // MD5签名
+        String sqlPwd = md5Str +pwd;
+        String inSqlPwd = DigestUtils.md5DigestAsHex(sqlPwd.getBytes());
 
-        return s;
+        commonService.updateInfo(name,inSqlPwd,id);
+        List<Stu> stus = commonService.updateInfo(name,inSqlPwd,id);
+        String stuInfos = JSON.toJSONString(stus);
+        String stateMsg = "1";
+        request.setAttribute("stateMsg", stateMsg);
+
+        return stateMsg;
     }
 
 }

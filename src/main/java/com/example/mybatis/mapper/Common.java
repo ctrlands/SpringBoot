@@ -66,7 +66,7 @@ public interface Common {
     public String DelByName(@Param("name") String name);
 
     /*根据Id编辑信息*/
-    @Select("update student set name=#{name},pwd=#{pwd} where Id=#{id}")
-    public String updateInfo(@Param("name") String name, @Param("pwd") String pwd,@Param("Id") String id);
+    @Select( "update student set name=#{name}, pwd=#{pwd} where id=#{id}" )
+    public List<Stu> updateInfo(@Param("name") String name, @Param("pwd") String pwd, @Param("id") String id);
 
 }

@@ -47,12 +47,13 @@
                     <div style="margin-top:15px;">
                         <span>password:</span><input id="dialog_pwd" style="margin-left:15px;">
                     </div>
+                    <input id="dialog_id" style="display:none;">
                 </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-default" data-dismiss="modal">关闭
                 </button>
-                <button type="button" class="btn btn-primary" id="updateBtn" onclick="updateInfo">
+                <button type="button" class="btn btn-primary" id="updateBtn" >
                     提交更改
                 </button>
             </div>
@@ -70,16 +71,23 @@
     * Bootstrap-table
     */
     $("#test_table").bootstrapTable({
-        url: '/getInfoAjax',
-        method: "post",
+        //url: '/getInfoAjax', // 客户端分页
+        url: '/getInfoPage',
+        method: "get",
+        dateType: 'json',
+        dataField: 'data',
+        contentType : "application/x-www-form-urlencoded", // 如果是post必须定义
         toolbar: "#toolbar",
         striped: true, // 是否显示行间隔色
         cache: false, // 是否使用缓存，默认true
+        silent : true, // 必须设置刷新事件
         pagination: true,
         sortable: true, // 是否启用排序
         sortOrder: "asc",
-        // queryParams: oTableInit.queryParams, // 传递参数
-        sidePagination: "client", // 分页方式：client（客户端分页），server（服务端分页）
+        queryParams: queryParams, // 传递参数,请求参数，这个关系到后续用到的异步刷新
+        responseHandler:responseHandler, // 如果不加这句，后台虽然正常返回数据，但是回提示没有匹配到数据
+        // sidePagination: "client", // 分页方式：client（客户端分页），server（服务端分页）
+        sidePagination: "server", // 分页方式：client（客户端分页），server（服务端分页）
         pageNumber: 1,
         pageSize: 5,
         pageList: [5, 10, 25, 50], // 可供选择的每页显示数量
@@ -108,10 +116,13 @@
                 valign: "middle",
                 width: "2%",
                 formatter: function (value, row, index) {
-                     return index + 1;
-                   /* var pageSize = $("#test_table").bootstrapTable("getOptions").pageSize;
+
+                    //return index + 1; // 客户端方式分页 序号自动增加，不会出现翻页过后序号从1开始的现象
+
+                    // 服务器端分页，序号自动增加 方式
+                    var pageSize = $("#test_table").bootstrapTable("getOptions").pageSize;
                     var pageNumber = $("#test_table").bootstrapTable("getOptions").pageNumber;
-                    return pageSize * (pageNumber - 1) + index + 1;*/
+                    return pageSize * (pageNumber - 1) + index + 1;
                 }
             },
             {
@@ -151,14 +162,36 @@
             editById();
             console.log(id);
         },
+        onLoadError: function(){  //加载失败时执行
+            layer.msg("加载数据失败", {time : 1500, icon : 2});
+        },
     });
 
-        // 得到查询的参数
-        /*OTableInit.queryParams = function (params) {
-            
+    var currentPage = 1; //当前页数
+    var perPage = $("#perPages").val(); // 每页展示数量
+
+    // 服务器分页
+    function queryParams(params) {
+        console.log("start");
+        return {
+            currentPage: params.offset/params.limit+1,
+            perPage: params.limit
+        }
+    }
+    //请求成功方法
+    function responseHandler(result){
+        //如果没有错误则返回数据，渲染表格
+        console.log("suc");
+        return {
+            total : result.total, //总页数,前面的key必须为"total"
+            data : result.stuPage, //行数据，前面的key要与之前设置的dataField的值一致.
         };
-        return OTableInit;*/
-    //};
+
+    };
+    //刷新表格数据,点击你的按钮调用这个方法就可以刷新
+    function refresh() {
+        $('#test_table').bootstrapTable('refresh', {url: "/getInfoPage"});
+    }
 
 
     // 操作栏的格式化
@@ -197,13 +230,16 @@
                  var str = "";
                  var rname;
                  var rpwd;
+                 var rid;
                  if(data.length > 0){
                      for(var k in data) {
                          rname = data[k].name;
                          rpwd = data[k].pwd;
+                         rid = data[0].id;
                      }
                         $("#dialog_name").val(rname);
                         $("#dialog_pwd").val(rpwd);
+                        $("#dialog_id").val(rid);
                         $('#myModal').modal('show');
                      }
                  else{
@@ -254,21 +290,34 @@
     }
 
 
+    $("#updateBtn").click(function(){
+        updateInfo();
+    });
+
+
     // 编辑信息
     function updateInfo() {
+        var postName = $("#dialog_name").val();
+        var postPwd = $("#dialog_pwd").val();
+        var postid = $("#dialog_id").val();
         $.ajax({
-            url: "",
+            url: "/UpdataById",
             data: {
-                name:,
-                pwd:,
+                name: postName,
+                pwd: postPwd,
+                id: postid,
             },
             type: "POST",
-            dataType: "json",
+            dataType: "text",
             success: function (data) {
-                
+                if (data == 1) {
+                    alert("更新成功");
+                    $('#myModal').modal('hide');
+                    $("#test_table").bootstrapTable('refresh');
+                }
             },
-            error: function () {
-
+            error: function (e) {
+                console.log(e.error);
             },
         });
     }
@@ -297,8 +346,8 @@
 
 
 
-    var currentPage = 1; //当前页数
-    var perPage = $("#perPages").val(); // 每页展示数量
+    /*var currentPage = 1; //当前页数
+    var perPage = $("#perPages").val(); // 每页展示数量*/
     ajaxGetInfo();
     function ajaxGetInfo() {
        var perPage = $("#perPages").val(); // 每页展示数量
@@ -316,7 +365,7 @@
                 // 用于在向服务器发送请求前执行一些动作,eg.防止用户重复提交数据,模拟Toast效果(ajax请求服务器加载数据列表时提示loading(“加载中，请稍后...”))
             },
             success: function (data) {
-                //console.log(data);
+                console.log(data);
                 //console.log(data.pages);
                 //console.log(data.stuPage);
                 var s1 = data.stuPage;
