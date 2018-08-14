@@ -2,33 +2,104 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>login</title>
+    <title>登陆</title>
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+
+            font-family: 'Microsoft YaHei';
+        }
+        .login_main{
+            width: 100vw;
+            height: 100vh;
+            background: url(/image/loginBg.jpg) no-repeat center;
+            background-size: cover;
+
+            font-size: 16px;
+            color: #f3f3f3;
+        }
+        .login_box{
+            width: 30vw;
+            height: 400px;
+            margin-left: auto;
+            margin-right: auto;
+            margin-top: calc(50vh - 200px);
+
+            background-color: rgba(243, 243, 243, 0.4);
+
+            padding-left: 25px;
+
+
+
+        }
+        .login_box_input {
+            width: 20vw;
+            height: 35px;
+            background-color: rgba(243, 243, 243, 0.8);
+
+            border: none;
+            outline: none;
+            box-shadow: 0 3px 2px #888888;
+
+            padding-left: 15px;
+
+            margin-top: 35px;
+        }
+    </style>
 </head>
 <body>
-    <div>
-        <div>登录系统</div>
+    <div class="login_main">
+        <div>&nbsp;</div>
         <!--<form th:action="@{loginPage}" th:method="post">-->
-        <form action="/loginPage" method="post">
+        <div class="login_box">
+            <input class="login_box_input" type="text" name="name" id="name" placeholder="手机号/邮箱/Id" onblur="mycheck()" />
+            <span id="msgs" style="visibility: hidden;"></span>
+            <input class="login_box_input" type="text" name="pwd" id="pwd" />
+            <input type="button" value="登陆" id="loginBtn" class="loginBtn" onclick="loginIn()"/>
             <h3 th:text="${mymsg}" id="msg"></h3>
-            <table>
-                <tr>
-                    <td>用户名：</td>
-                    <td><input type="text" name="name" id="name" placeholder="name" onblur="mycheck()"></input><span id="msgs" style="visibility: hidden;"></span></td>
-                </tr>
-
-                <tr>
-                    <td>密码：</td>
-                    <td><input type="text" name="pwd" id="pwd"></input></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td><input type="submit" value="登陆" id="loginBtn" class="loginBtn"></input></td>
-                </tr>
-            </table>
-        </form>
+        </div>
     </div>
+    <script src="https://cdn.bootcss.com/less.js/3.0.4/less.min.js"></script>
     <script src="https://cdn.bootcss.com/jquery/2.2.2/jquery.js"></script>
     <script th:inline="javascript">
+        function loginIn() {
+            $.ajax({
+                type: "POST",
+                dataType: "json",
+                url: "/loginPage",
+                data: {
+                    name: $("#name").val(),
+                    pwd: $("#pwd").val(),
+                },
+                success: function (data) {
+                    switch (data.code) {
+                        case "-4":
+                            console.log("saas");
+                            $("#msg").text(data.msg);
+                            break;
+                        case "-1":
+                            $("#msg").text(data.msg);
+                            break;
+                        case "0":
+                            $("#msg").text(data.msg);
+                            break;
+                        case "1":
+                            window.location.href="/index";
+                            break;
+
+                    }
+
+                    /*if(data)
+                    window.location.href="/index";
+                    console.log("545456456");*/
+
+                },
+                error: function (err) {
+                    console.log(err.responseText)
+                }
+            })
+        }
         function mycheck() {
             var isNullVal = $("#name").val();
             if ( isNullVal == "") {
@@ -52,20 +123,5 @@
 
 
     </script>
-    <!--<script th:inline="javascript">
-        $("#loginBtn").click(
-            $.ajax({
-                type: "post",
-                dataType: "jsonp",
-                url: "http://localhost:8080/loginPage",
-                success: function (data) {
-                    alert("sc");
-                },
-                error: function (err) {
-                    alert("err");
-                }
-            })
-        );
-    </script>-->
 </body>
 </html>

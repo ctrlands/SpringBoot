@@ -198,7 +198,7 @@
     function actionFormatter(value, row, index) {
         var id = value;
         var result = "";
-        result += "<a href='javascript:;' class='btn btn-xs green' onclick=\"showByName()\" title='查看'><span class='glyphicon glyphicon-eye-open'></span></a>";
+        result += "<a href='javascript:;' class='btn btn-xs green' onclick=\"editByName()\" title='查看'><span class='glyphicon glyphicon-eye-open'></span></a>";
         result += "<a href='javascript:;' class='btn btn-xs blue' onclick=\"editByName()\" title='编辑'><span class='glyphicon glyphicon-pencil'></span></a>";
         result += "<a href='javascript:;' class='btn btn-xs red' onclick=\"delByName()\" title='删除'><span class='glyphicon glyphicon-remove'></span></a>";
         return result;

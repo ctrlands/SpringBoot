@@ -2,6 +2,7 @@ package com.example.mybatis.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
+import com.example.mybatis.entity.LoginEnum;
 import com.example.mybatis.entity.Stu;
 import com.example.mybatis.service.CommonService;
 import com.example.mybatis.service.LoginRequired;
@@ -26,6 +27,8 @@ public class CommonController {
 
     public final String md5Str = "personalMd5";
 
+    public String loginState = "";
+
     //添加初始化登录页面的转发配置
     @RequestMapping(value = "/", method = { RequestMethod.GET } )
     public String login() {
@@ -41,7 +44,8 @@ public class CommonController {
     /*该value的值loginPage要与login.html页面中form中的action值一样，
     是通过form表单提交数据，即点击登录按钮时，提交数据，发送请求*/
     @RequestMapping(value = "/loginPage", method = { RequestMethod.POST, RequestMethod.GET })
-    public String login(HttpServletRequest request, HttpSession session) {
+    @ResponseBody
+    public String login (HttpServletRequest request, HttpSession session) {
         String mymsg = "";
         // String id = request.getParameter(“id“);该代码是获取前台页面中用户输入的用户名的值，getParameter后面的id要与form表单的标签(input等)中的name值相同。
         String name = request.getParameter("name");
@@ -50,7 +54,10 @@ public class CommonController {
         if ( name == "" || pwd == "" ) {
             mymsg = "用户名和密码不能为空";
             request.setAttribute("mymsg", mymsg);
-            return "/login/login";
+             //throw new LoginException("3","2","4");
+             throw new LoginException(LoginEnum.NOTALLOWNULL);
+            //return "/login/login";
+           // return mymsg;
         }
         // MD5签名
         String sqlPwd = md5Str +pwd;
@@ -64,15 +71,19 @@ public class CommonController {
         if(isExistName == null){
             mymsg = "账号不存在，请重新输入";
             request.setAttribute("mymsg", mymsg );
-            return "/login/login";
+            throw new LoginException(LoginEnum.ERRID);
+            // return "/login/login";
+            // return mymsg;
         } else {
             if ( matchRight == null ) {
                 mymsg = "用户密码错误";
                 request.setAttribute("mymsg", mymsg );
-                return "/login/login";
+                throw new LoginException(LoginEnum.ERRPWD);
+                // return mymsg;
             } else {
                 session.setAttribute("name", matchRight );
-                return "redirect:/index";
+                throw new LoginException(LoginEnum.SUCCESS);
+               // return "";
             }
         }
     }
