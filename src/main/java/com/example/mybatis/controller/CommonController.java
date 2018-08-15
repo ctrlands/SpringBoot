@@ -90,11 +90,16 @@ public class CommonController {
 
     @RequestMapping(value = "/registerPage", method = { RequestMethod.POST })
     public String register (HttpServletRequest request) {
-        System.out.println();
         String regmsg = "";
         String name = request.getParameter("name");
         String pwd = request.getParameter("pwd");
         String repwd = request.getParameter("repwd");
+
+        if (!pwd.equals(repwd)) {
+            regmsg = "密码不一致";
+            request.setAttribute("regmsg", regmsg);
+            return "/login/register";
+        }
 
         // MD5签名
         String sqlPwd = md5Str +pwd;
@@ -112,7 +117,7 @@ public class CommonController {
 
         if ( isExist != null){
             regmsg = "已存在该账号";
-            request.setAttribute("rmsg", regmsg);
+            request.setAttribute("regmsg", regmsg);
             return "/login/register";
         } else {
             Stu stu = new Stu();

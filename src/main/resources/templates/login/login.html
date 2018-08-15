@@ -2,62 +2,285 @@
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
+
+
+    <link rel="stylesheet" type="text/css" href="css/style.css" >
     <title>登陆</title>
     <style>
+        body{
+            color: #f1f1f1;
+        }
         *{
             margin: 0;
             padding: 0;
-
             font-family: 'Microsoft YaHei';
         }
+        input{
+            border: none;
+            outline: none;
+        }
+        a{
+            text-decoration: none;
+            font-size: 14px;
+            color: rgba(0, 0, 0, .6);
+        }
         .login_main{
-            width: 100vw;
+            width: 100%;
             height: 100vh;
-            background: url(/image/loginBg.jpg) no-repeat center;
-            background-size: cover;
+
+            background-color: #f1f1f1;
 
             font-size: 16px;
             color: #f3f3f3;
         }
         .login_box{
-            width: 30vw;
-            height: 400px;
+            width: 400px;
+            height: 500px;
             margin-left: auto;
             margin-right: auto;
-            margin-top: calc(50vh - 200px);
+            margin-top: calc(50vh - 255px);
 
-            background-color: rgba(243, 243, 243, 0.4);
+            background-color: #fff;
 
-            padding-left: 25px;
-
-
+            box-shadow: 0 0 8px rgba(0,0,0,.1);
 
         }
-        .login_box_input {
-            width: 20vw;
-            height: 35px;
+        .login_input{
+            text-align: center;
+
+        }
+        .login_input_msg_id, .login_input_msg_pwd{
+            visibility: hidden;
+            position: absolute;
+            display: inline-block;
+            margin-top: -38px;
+            margin-left: 400px;
+        }
+        .login_input_msg_id span, .login_input_msg_pwd span{
+            color: rgba(255, 255, 255, .8);
+            font-size: 14px;
+        }
+
+        /*三角气泡*/
+        .test_triangle_border{
+            margin:0 auto 20px;
+            position:relative;
+        }
+
+        .test_triangle_border .popup{
+            width:100px;
+            padding:10px 20px;
+            color:#333;
+            border-radius:4px;
+            position:absolute;
+            top:-8px;
+            left:-20px;
+            background-color: rgba(234, 111, 90, 0.7);
+        }
+
+        .test_triangle_border .popup em{
+            display:block;
+            width:0;
+            height:0;
+            border-width:10px 10px 10px 0;
+            border-style:solid;
+            border-color:transparent rgba(234, 111, 90, 0.7) transparent transparent;
+            position:absolute;
+            left:-10px;
+        }
+
+
+
+        .login_box_input_name {
+            width: 300px;
+            height: 50px;
             background-color: rgba(243, 243, 243, 0.8);
 
-            border: none;
             outline: none;
-            box-shadow: 0 3px 2px #888888;
+            border: 1px solid #c8c8c8;
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
 
-            padding-left: 15px;
-
-            margin-top: 35px;
+            padding-left: 35px;
         }
+
+        .login_box_input_pwd {
+            width: 300px;
+            height: 50px;
+            background-color: rgba(243, 243, 243, 0.8);
+
+            outline: none;
+
+            border: 1px solid #c8c8c8;
+            border-radius: 0 0 4px 4px;
+
+            padding-left: 35px;
+
+        }
+
+        .login_title{
+            text-align: center;
+            padding-top: 45px;
+            padding-bottom: 45px;
+            position: relative;
+        }
+        .login_title a{
+            text-decoration: none;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            margin-left: 10px;
+            margin-right: 10px;
+        }
+        .myactive{
+            text-decoration: none;
+            padding: 10px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #ea6f5a;
+            border-bottom: 2px solid #ea6f5a;
+        }
+        .login_title span{
+            position: absolute;
+            color: rgba(0, 0, 0, .6);
+            padding: 10px;
+            font-size: 18px;
+            margin-top: -15px;
+            margin-left: -15px;
+            font-weight: 700;
+        }
+        .icon-lock2, .icon-person{
+            width: 18px;
+            height: 18px;
+        }
+        .myicon{
+            color: #000;
+            font-size: 18px;
+            margin-right: -25px;
+            margin-top: 15px;
+        }
+        .login_btn{
+            text-align: center;
+            margin-top: 20px;
+        }
+        .loginBtn{
+            width: 300px;
+            height: 50px;
+            border-radius: 25px;
+            background-color: #3194d0;
+            text-align: center;
+            font-size: 18px;
+            color: #fff;
+            cursor: pointer;
+        }
+
+
+        .loginBtn:hover{
+            background-color: #187cb7;
+        }
+
+        .login_label_Rember, .login_label_FAQ{
+            display: inline-block;
+            padding: 15px 0;
+        }
+        .login_label_Rember{
+            margin-left: 27px;
+        }
+        .login_label_Rember input{
+            vertical-align: middle;
+        }
+        .login_label_Rember span{
+            margin-left: 5px;
+            color: rgba(0, 0, 0, .6);
+            font-size: 14px;
+        }
+        .login_label_FAQ{
+            margin-right: 38px;
+            float: right;
+
+        }
+
+        .login_label input {
+            vertical-align: middle;
+            padding-right: 5px;
+        }
+        .login_social{
+            text-align: center;
+            margin-top: 25px;
+        }
+        .login_social span{
+            position: relative;
+            font-size: 12px;
+            color: rgba(0, 0, 0, .5);
+
+        }
+        .login_social span:before{
+            content: "";
+            border-top: 1px solid rgba(0, 0, 0, .5);
+            width: 60px;
+            position: absolute;
+            top: 9px;
+            left: -75px;
+        }
+        .login_social span:after{
+            content: "";
+            border-top: 1px solid rgba(0, 0, 0, .5);
+            width: 60px;
+            position: absolute;
+            top: 9px;
+            margin-left: 15px;
+        }
+
+
     </style>
 </head>
 <body>
     <div class="login_main">
         <div>&nbsp;</div>
-        <!--<form th:action="@{loginPage}" th:method="post">-->
         <div class="login_box">
-            <input class="login_box_input" type="text" name="name" id="name" placeholder="手机号/邮箱/Id" onblur="mycheck()" />
-            <span id="msgs" style="visibility: hidden;"></span>
-            <input class="login_box_input" type="text" name="pwd" id="pwd" />
-            <input type="button" value="登陆" id="loginBtn" class="loginBtn" onclick="loginIn()"/>
-            <h3 th:text="${mymsg}" id="msg"></h3>
+            <div class="login_title">
+                <a href="/" class="myactive">登录</a>
+                <span>.</span>
+                <a href="/register">注册</a>
+            </div>
+
+            <div class="login_input">
+                <span class="icon-lock2 myicon"></span><input class="login_box_input_name" type="text" name="name" id="name" placeholder="手机号/邮箱/Id" onblur="mycheck()" />
+
+            </div>
+            <div class="login_input_msg_id">
+                <div class="test_triangle_border">
+                    <div class="popup">
+                        <em></em> <span id="idNull"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="login_input">
+                <span class="icon-person myicon"></span><input class="login_box_input_pwd" type="text" name="pwd" id="pwd" placeholder="密码"/>
+            </div>
+            <div class="login_input_msg_pwd">
+                <div class="test_triangle_border">
+                    <div class="popup">
+                        <em></em> <span id="pwdErr"></span>
+                    </div>
+                </div>
+            </div>
+            <div class="login_label_Rember">
+                <input type="checkbox" ><span>记住我</span>
+            </div>
+            <div class="login_label_FAQ">
+                <a href="#">登录遇到问题</a>
+            </div>
+            <div class="login_btn">
+                <input type="button" value="登录" id="loginBtn" class="loginBtn" onclick="loginIn()"/>
+            </div>
+
+            <div class="login_social">
+                <span>社交账号登陆</span>
+            </div>
+
+
+            <h3 id="msg"></h3>
         </div>
     </div>
     <script src="https://cdn.bootcss.com/less.js/3.0.4/less.min.js"></script>
@@ -75,25 +298,21 @@
                 success: function (data) {
                     switch (data.code) {
                         case "-4":
-                            console.log("saas");
-                            $("#msg").text(data.msg);
+                        case "0":
+                            $(".login_input_msg_id").css("visibility","visible");
+                            $(".login_input_msg_pwd").css("visibility","hidden");
+                            $("#idNull").text(data.msg);
                             break;
                         case "-1":
-                            $("#msg").text(data.msg);
-                            break;
-                        case "0":
-                            $("#msg").text(data.msg);
+                            $(".login_input_msg_id").css("visibility","hidden");
+                            $(".login_input_msg_pwd").css("visibility","visible");
+                            $("#pwdErr").text(data.msg);
                             break;
                         case "1":
                             window.location.href="/index";
                             break;
 
                     }
-
-                    /*if(data)
-                    window.location.href="/index";
-                    console.log("545456456");*/
-
                 },
                 error: function (err) {
                     console.log(err.responseText)
@@ -103,15 +322,14 @@
         function mycheck() {
             var isNullVal = $("#name").val();
             if ( isNullVal == "") {
-                $("#msgs").html("not allow null");
-                $("#msgs").css("visibility" , "visible");
+               $("#msgs").html("not allow null");
+               $("#msgs").css("visibility","visible");
             }
             else {
                 var nameReg = /^[0-9a-zA-Z\u4E00-\u9FA5]{2,10}$/;
                 var nameRegResult=new RegExp(nameReg);
                 var low = isNullVal.toLowerCase();
                 if (nameRegResult.test(isNullVal) == true) {
-                    alert("合法");
                     $("#msgs").css("visibility" , "hidden");
                 }
                 else {
