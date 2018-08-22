@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.example.mybatis.entity.LoginEnum;
 import com.example.mybatis.entity.Stu;
+import com.example.mybatis.entity.VerCode;
 import com.example.mybatis.service.CommonService;
 import com.example.mybatis.service.LoginRequired;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -290,6 +292,50 @@ public class CommonController {
         request.setAttribute("stateMsg", stateMsg);
 
         return stateMsg;
+    }
+
+    //  生成验证码
+    @RequestMapping(value = "/getVerCode")
+    public void GetVerCode(HttpServletRequest request, HttpServletResponse response) {
+        try {
+            response.setContentType("image/jpeg"); // 设置响应类型，告诉浏览器的输出内容为图片
+            response.setHeader("Pragma", "No-cache"); // 设置响应头信息，告诉浏览器不要缓存此类容
+            response.setHeader("Cache-Control", "no-cache");
+            response.setDateHeader("Expire", 0);
+
+            VerCode vercode = new VerCode();
+            vercode.getRandcode(request, response); // 输出验证码图片方法
+
+
+        } catch(Exception e) {
+
+        }
+
+    }
+    /**
+     * 忘记密码页面校验验证码
+     */
+    @RequestMapping(value = "/checkVerify", method = RequestMethod.POST, headers = "Accept=application/json")
+    @ResponseBody
+    public boolean checkVerify(HttpServletRequest request, HttpSession session) {
+        try{
+            //从session中获取随机数
+            String inputStr = request.getParameter("inputStr");
+
+            //String inputStr = requestMap.get("inputStr").toString();
+            String random = (String) session.getAttribute("RANDOMVALIDATECODEKEY");
+            if (random == null) {
+                return false;
+            }
+            if (random.equals(inputStr)) {
+                return true;
+            } else {
+                return false;
+            }
+        }catch (Exception e){
+            //logger.error("验证码校验失败", e);
+            return false;
+        }
     }
 
 }

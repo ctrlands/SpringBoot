@@ -101,6 +101,7 @@
 
 
         .login_box_input_name {
+            position: relative;
             width: 300px;
             height: 50px;
             background-color: rgba(243, 243, 243, 0.8);
@@ -114,6 +115,7 @@
         }
 
         .login_box_input_pwd {
+            position: relative;
             width: 300px;
             height: 50px;
             background-color: rgba(243, 243, 243, 0.8);
@@ -127,6 +129,7 @@
 
         }
         .login_box_input_repwd {
+            positon: relative;
             width: 300px;
             height: 50px;
             background-color: rgba(243, 243, 243, 0.8);
@@ -171,15 +174,16 @@
             margin-left: -15px;
             font-weight: 700;
         }
-        .icon-lock2, .icon-person{
+        .icon-lock, .icon-person{
             width: 18px;
             height: 18px;
         }
         .myicon{
+            position: absolute;
             color: #000;
             width: 18px;
             height: 18px;
-            margin-right: -25px;
+            margin-left: 8px;
         }
         .login_btn{
             text-align: center;
@@ -288,7 +292,7 @@
             <form action="registerPage" method="post" onsubmit="return check()">
                 <!--<h3 th:text="${regmsg}" style="color: #f03326;"></h3>-->
                 <div class="login_input">
-                    <span class="icon-person myicon"></span><input class="login_box_input_name" type="text" name="name" id="name" placeholder="昵称" />
+                    <span class="icon-person myicon" style="margin-top:17px;"></span><input class="login_box_input_name" autocomplete="off" type="text" name="name" id="name" placeholder="昵称" />
                 </div>
                 <div class="login_input_msg_id">
                     <div class="test_triangle_border">
@@ -298,7 +302,7 @@
                     </div>
                 </div>
                 <div class="login_input">
-                    <span class="icon-lock2 myicon"></span><input class="login_box_input_pwd" type="text" name="pwd" id="pwd" placeholder="密码"/>
+                    <span class="icon-lock myicon" style="margin-top:19px;"></span><input class="login_box_input_pwd" autocomplete="off" type="text" name="pwd" id="pwd" placeholder="密码"/>
                 </div>
                 <div class="login_input_msg_pwd">
                     <div class="test_triangle_border">
@@ -308,7 +312,7 @@
                     </div>
                 </div>
                 <div class="login_input">
-                    <span class="icon-lock2 myicon"></span><input class="login_box_input_repwd" type="text" name="repwd" id="repwd" placeholder="确认密码"/>
+                    <span class="icon-lock myicon" style="margin-top:20px;color: rgba(0,0,0,.2);"></span><input class="login_box_input_repwd" autocomplete="off" type="text" name="repwd" id="repwd" placeholder="确认密码"/>
                 </div>
                 <div class="login_input_msg_repwd">
                     <div class="test_triangle_border">
@@ -332,8 +336,8 @@
             </div>
 
             <div class="login_social_logo">
-                <span class="icon-wechat" style="margin-right: 15px;"></span>
-                <span class="icon-qq iconqq" style="margin-left: 15px"></span>
+                <a href="#"><span class="icon-wechat" style="margin-right: 15px;font-size: 35px;"></span></a>
+                <a href="#"><span class="icon-qq iconqq" style="margin-left: 15px;font-size: 30px;"></span></a>
             </div>
 
             <h3 id="msg"></h3>
